@@ -1,25 +1,78 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
 output: 
-  html_document:
-    keep_md: true
+  html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ## Loading and preprocessing the data
-
-
+```{r dataload}
+library('dplyr')
+activity <- read.csv("activity.csv")
+good <- complete.cases(activity)
+activity_NA <- activity[!good, ]
+activity <- activity[good, ]
+```
 
 ## What is mean total number of steps taken per day?
-
-
-
+```{r task1}
+activity_day <- transmute(activity, steps = steps, day = as.Date(date))
+activity_group_day <- group_by(activity_day, day)
+activity_summary_day <- summarize(activity_group_day, total = sum(steps), Mean = mean(steps), Median = median(steps))
+hist(activity_summary_day[[2]], main = 'Frequecy of Number of Steps', col = 'Red', xlab = 'Number of Steps', ylim = c(0, 30))
+print.data.frame(transmute(activity_summary_day, Day = day, Mean = Mean, Median = Median), row.names=FALSE)
+```
+The median values are all . This is because most of the itervalls per day do have 0 steps.
 ## What is the average daily activity pattern?
-
-
+```{r task2 }
+activity_group_interval <- group_by(activity, interval)
+activity_summary_interval <- as.data.frame(summarize(activity_group_interval, Mean = mean(steps)))
+plot(activity_summary_interval, type = 'l')
+max_mean_steps <- activity_summary_interval[activity_summary_interval$Mean == max(activity_summary_interval$Mean), ]$interval
+```
+The maximum number of steps is `r max_mean_steps`. 
 
 ## Imputing missing values
+```{r task 4}
+num_row <- nrow(activity_NA)
+for(i in 1:nrow(activity_NA)){
+        steps <- activity_summary_interval[activity_summary_interval$interval == activity_NA[i, ]$interval, ]$Mean
+        activity_NA[i, ]$steps <- steps
+}
 
+activity_new <- rbind(activity, activity_NA)
+
+activity_new_day <- transmute(activity_new, steps = steps, day = as.Date(date))
+activity_new_group_day <- group_by(activity_new_day, day)
+activity_new_summary_day <- summarize(activity_new_group_day, total = sum(steps), Mean = mean(steps), Median = median(steps))
+
+hist(activity_new_summary_day[[2]], main = 'Frequecy of Number of Steps', col = 'Red', xlab = 'Number of Steps', ylim = c(0, 30))
+print.data.frame(transmute(activity_new_summary_day, Day = day, Mean = Mean, Median = Median), row.names=FALSE)
+```
+The total number of entries with missing values is `r num_row`.
+The overall pattern of the activities hs not chaged. The number of steps has icreased, because i added the mean of the intervall to the missig values. This is also the reson why the median is now differnt from 0.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r task 5}
+weekend <- c('Saturday', 'Sunday')
+activity_week <- transmute(activity_new, steps = steps, interval = interval, wday = as.factor(weekdays(as.Date(date))))
+activity_week_end <- transmute(activity_week, steps = steps, interval = interval, weekend = as.factor(wday %in% weekend))
+
+activity_weekend <- subset(activity_week_end, weekend == TRUE, select = c(steps, interval))
+activity_weekday <- subset(activity_week_end, weekend == FALSE, select = c(steps, interval))
+
+activity_group_interval_wd <- group_by(activity_weekday, interval)
+activity_summary_interval_wd <- as.data.frame(summarize(activity_group_interval_wd, Mean = mean(steps)))
+
+activity_group_interval_we <- group_by(activity_weekend, interval)
+activity_summary_interval_we <- as.data.frame(summarize(activity_group_interval_we, Mean = mean(steps)))
+
+plot(activity_summary_interval_wd, type = 'l', col = 'green')
+lines(activity_summary_interval_we, col = 'red')
+#egend("topright", pch = '-', col = c('black', 'red', 'blue'), legend = c('Sub_metering_1','Sub_metering_2','Sub_metering_3'))
+#print.data.frame(transmute(activity_new_summary_day, Day = day, Mean = Mean, Median = Median), row.names=FALSE)
+```
