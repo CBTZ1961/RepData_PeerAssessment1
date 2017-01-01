@@ -1,7 +1,7 @@
 # Reproducible Research: Peer Assessment 1
 
 
-
+addig some additioal text
 ## Loading and preprocessing the data
 
 ```r
@@ -41,7 +41,7 @@ activity_summary_day <- summarize(activity_group_day, total = sum(steps), Mean =
 hist(activity_summary_day[[2]], main = 'Frequecy of Number of Steps', col = 'Red', xlab = 'Number of Steps', ylim = c(0, 30))
 ```
 
-![](PA1_template_files/figure-html/task1-1.png)<!-- -->
+![](figures/task1-1.png)<!-- -->
 
 ```r
 print.data.frame(transmute(activity_summary_day, Day = day, Mean = Mean, Median = Median), row.names=FALSE)
@@ -112,7 +112,7 @@ activity_summary_interval <- as.data.frame(summarize(activity_group_interval, Me
 plot(activity_summary_interval, type = 'l')
 ```
 
-![](PA1_template_files/figure-html/task2-1.png)<!-- -->
+![](figures/task2-1.png)<!-- -->
 
 ```r
 max_mean_steps <- activity_summary_interval[activity_summary_interval$Mean == max(activity_summary_interval$Mean), ]$interval
@@ -137,7 +137,7 @@ activity_new_summary_day <- summarize(activity_new_group_day, total = sum(steps)
 hist(activity_new_summary_day[[2]], main = 'Frequecy of Number of Steps', col = 'Red', xlab = 'Number of Steps', ylim = c(0, 30))
 ```
 
-![](PA1_template_files/figure-html/task 4-1.png)<!-- -->
+![](figures/task 4-1.png)<!-- -->
 
 ```r
 print.data.frame(transmute(activity_new_summary_day, Day = day, Mean = Mean, Median = Median), row.names=FALSE)
@@ -231,7 +231,7 @@ plot(activity_summary_interval_wd, type = 'l', col = 'green')
 lines(activity_summary_interval_we, col = 'red')
 ```
 
-![](PA1_template_files/figure-html/task 5-1.png)<!-- -->
+![](figures/task 5-1.png)<!-- -->
 
 ```r
 #egend("topright", pch = '-', col = c('black', 'red', 'blue'), legend = c('Sub_metering_1','Sub_metering_2','Sub_metering_3'))
