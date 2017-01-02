@@ -209,7 +209,7 @@ print.data.frame(transmute(activity_new_summary_day, Day = day, Mean = Mean, Med
 ##  2012-11-30 37.3825996 34.11321
 ```
 The total number of entries with missing values is 2304.
-The overall pattern of the activities hs not chaged. The number of steps has icreased, because i added the mean of the intervall to the missig values. This is also the reson why the median is now differnt from 0.
+The overall pattern of the activities hs not chaged. The number of steps has icreased, because I added the mean of the intervall to the missig values. This is also the reason why the median is now differnt from 0.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
