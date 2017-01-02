@@ -1,7 +1,7 @@
 # Reproducible Research: Peer Assessment 1
 
 
-addig some additioal text
+
 ## Loading and preprocessing the data
 
 ```r
@@ -26,6 +26,7 @@ library('dplyr')
 ```
 
 ```r
+library('lattice')
 activity <- read.csv("activity.csv")
 good <- complete.cases(activity)
 activity_NA <- activity[!good, ]
@@ -223,17 +224,17 @@ activity_weekday <- subset(activity_week_end, weekend == FALSE, select = c(steps
 
 activity_group_interval_wd <- group_by(activity_weekday, interval)
 activity_summary_interval_wd <- as.data.frame(summarize(activity_group_interval_wd, Mean = mean(steps)))
+activity_summary_interval_wd <- transmute(activity_summary_interval_wd, Day = 'Weekday', interval = interval, Mean = Mean)
 
 activity_group_interval_we <- group_by(activity_weekend, interval)
 activity_summary_interval_we <- as.data.frame(summarize(activity_group_interval_we, Mean = mean(steps)))
+activity_summary_interval_we <- transmute(activity_summary_interval_we, Day = 'Weekend', interval = interval, Mean = Mean)
 
-plot(activity_summary_interval_wd, type = 'l', col = 'green')
-lines(activity_summary_interval_we, col = 'red')
+activity_summary_interval <- rbind(activity_summary_interval_wd, activity_summary_interval_we)
+activity_summary_interval <- transmute(activity_summary_interval, Day = as.factor(Day), interval = interval, Mean = Mean)
+
+
+xyplot(activity_summary_interval$Mean ~ activity_summary_interval$interval | factor(activity_summary_interval$Day), layout = c(1,2),ylab = ('Number of steps'), xlab = ('Interval'), type = 'l' )
 ```
 
 ![](figures/task 5-1.png)<!-- -->
-
-```r
-#egend("topright", pch = '-', col = c('black', 'red', 'blue'), legend = c('Sub_metering_1','Sub_metering_2','Sub_metering_3'))
-#print.data.frame(transmute(activity_new_summary_day, Day = day, Mean = Mean, Median = Median), row.names=FALSE)
-```
